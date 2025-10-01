@@ -10,12 +10,14 @@ class drawTestConan(ConanFile):
     generators = "CMakeDeps", "CMakeToolchain"
 
     def requirements(self):
+        print("REQUIREMENTS!!!!!!!!!!!------------")
+        print(f"Reference is {self.tested_reference_str}")
         self.requires(self.tested_reference_str)
 
     def build(self):
         cmake = CMake(self)
         cmake.configure()
-        cmake.build()
+        cmake.build(cli_args=["--verbose"])
 
     def layout(self):
         cmake_layout(self)

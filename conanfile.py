@@ -1,10 +1,12 @@
+from posixpath import join
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
+from conan.tools.files import copy
 
 
 class drawRecipe(ConanFile):
     name = "draw"
-    version = "0.1.0"
+    version = "0.2.1"
     package_type = "library"
 
     # Optional metadata
@@ -20,7 +22,10 @@ class drawRecipe(ConanFile):
     default_options = {"shared": False, "fPIC": True}
 
     # Sources are located in the same place as this recipe, copy them to the recipe
-    exports_sources = "CMakeLists.txt", "src/*", "include/*"
+    exports_sources = "CMakeLists.txt", "src/*", "include/*", "include*"
+    
+    def requirements(self):
+        self.requires("cmocka/1.1.8", test=True)
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -32,7 +37,7 @@ class drawRecipe(ConanFile):
 
     def layout(self):
         cmake_layout(self)
-    
+
     def generate(self):
         deps = CMakeDeps(self)
         deps.generate()
@@ -47,6 +52,11 @@ class drawRecipe(ConanFile):
     def package(self):
         cmake = CMake(self)
         cmake.install()
+        print("===================================================================================")
+        print("Copying header files...")
+        print(f"From: {join(self.source_folder, 'include')} To: {join(self.package_folder, 'include')}")
+        copy(self, "*.h", join(self.source_folder, "include"), join(self.package_folder, "include"))
+        copy(self, "*.c", join(self.source_folder, "src"), join(self.package_folder, "src"))
 
     def package_info(self):
         self.cpp_info.libs = ["draw"]
