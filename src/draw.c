@@ -88,9 +88,9 @@ void write_img_to_file(const char* filename, Color* img, int width, int height) 
     for (int j = 0; j < height; j++) {
         for (int i = 0; i < width; i++) {
             Color pixel = img[j * width + i];
-            //fputc(Vec3.red(pixel), file);
-            //fputc(Vec3.green(pixel), file);
-            //fputc(Vec3.blue(pixel), file);
+            fputc(red(pixel), file);
+            fputc(green(pixel), file);
+            fputc(blue(pixel), file);
         }
     }
     fclose(file);

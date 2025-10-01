@@ -24,12 +24,15 @@ int main() {
     else {
         printf("Image created successfully\n");
 
-        printf("Draw image to screen...\n");
-        write_img_to_screen(img, image_width, image_height);
-
         // Write image to file
         printf("Writing image to 'output.ppm'\n");
         write_img_to_file("output.ppm", img, image_width, image_height);
+
+        // Draw image to screen
+        printf("Draw image to screen...\n");
+        write_img_to_screen(img, image_width, image_height);
+
+        // Free img
         free(img);
     }
 
