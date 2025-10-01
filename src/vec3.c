@@ -26,14 +26,17 @@ static struct Vec3 cross(struct Vec3 a, struct Vec3 b) {
     );
 }
 
-static uint8_t red(struct Vec3 v) {
-    return (uint8_t)(255.999 * v.x);
+static uint8_t red(struct Vec3 *this) {
+    printf("In red()\n");
+    return (uint8_t)(255.999 * this->x);
 }
 
-static uint8_t green(struct Vec3 v) {
-    return (uint8_t)(255.999 * v.y);
+static uint8_t green(struct Vec3 *this) {
+    printf("In green()\n");
+    return (uint8_t)(255.999 * this->y);
 }
 
-static uint8_t blue(struct Vec3 v) {
-    return (uint8_t)(255.999 * v.z);
+static uint8_t blue(struct Vec3 *this) {
+    printf("In blue()\n");
+    return (uint8_t)(255.999 * this->z);
 }

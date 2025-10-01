@@ -18,6 +18,7 @@ class drawTestConan(ConanFile):
         cmake = CMake(self)
         cmake.configure()
         cmake.build(cli_args=["--verbose"])
+        #cmake.build()
 
     def layout(self):
         cmake_layout(self)

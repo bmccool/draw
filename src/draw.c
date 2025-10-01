@@ -2,48 +2,13 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <windows.h>
-//#include "vec3.h"
+#include "vec3.h"
 #include "draw.h"
+#include "object.h"
 
 #define max_width 1920
 #define max_height 1080
 
-static struct Vec3 new(float x, float y, float z) {
-    struct Vec3 v = {x, y, z};
-    return v;
-}
-
-static struct Vec3 add(struct Vec3 a, struct Vec3 b) {
-    return new(a.x + b.x, a.y + b.y, a.z + b.z);
-}
-
-static struct Vec3 subtract(struct Vec3 a, struct Vec3 b) {
-    return new(a.x - b.x, a.y - b.y, a.z - b.z);
-}
-
-static float dot(struct Vec3 a, struct Vec3 b) {
-    return a.x * b.x + a.y * b.y + a.z * b.z;
-}
-
-static struct Vec3 cross(struct Vec3 a, struct Vec3 b) {
-    return new(
-        a.y * b.z - a.z * b.y, // X
-        a.z * b.x - a.x * b.z, // Y
-        a.x * b.y - a.y * b.x  // Z
-    );
-}
-
-static uint8_t red(struct Vec3 v) {
-    return (uint8_t)(255.999 * v.x);
-}
-
-static uint8_t green(struct Vec3 v) {
-    return (uint8_t)(255.999 * v.y);
-}
-
-static uint8_t blue(struct Vec3 v) {
-    return (uint8_t)(255.999 * v.z);
-}
 
 Color* create_image_stream(int width, int height) {
     size_t size = width * height; // 1 "Color" struct per pixel (R, G, B)
@@ -87,10 +52,13 @@ void write_img_to_file(const char* filename, Color* img, int width, int height) 
     fprintf(file, "P6\n%d %d\n255\n", width, height);
     for (int j = 0; j < height; j++) {
         for (int i = 0; i < width; i++) {
+            printf("Here: 1\n");
             Color pixel = img[j * width + i];
-            fputc(red(pixel), file);
-            fputc(green(pixel), file);
-            fputc(blue(pixel), file);
+            printf("Color pixel: R=%f, G=%f, B=%f\n", pixel.x, pixel.y, pixel.z);
+            printf("Color Pixel after methods: R=%d\n", pixel.red(&pixel));
+            fputc(pixel.red(&pixel), file);
+            fputc(pixel.green(&pixel), file);
+            fputc(pixel.blue(&pixel), file);
         }
     }
     fclose(file);
@@ -106,7 +74,7 @@ void write_img_to_screen(Color* img, int width, int height) {
     for (int j = 0; j < height; j++) {
         for (int i = 0; i < width; i++) {
             Color pixel = img[j * width + i];
-            SetPixel(memory_device_context, i, j, RGB(red(pixel), green(pixel), blue(pixel)));
+            SetPixel(memory_device_context, i, j, RGB(pixel.red(&pixel), pixel.green(&pixel), pixel.blue(&pixel)));
         }
     }
 
@@ -124,6 +92,9 @@ void write_img_to_screen(Color* img, int width, int height) {
 
 void draw(){
     printf("draw\n");
+    printf("Testing Object.h\n");
+    Object obj;
+    Object_init(&obj);
 }
 
 void render(){

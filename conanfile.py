@@ -6,7 +6,7 @@ from conan.tools.files import copy
 
 class drawRecipe(ConanFile):
     name = "draw"
-    version = "0.2.2"
+    version = "0.2.3"
     package_type = "library"
 
     # Optional metadata

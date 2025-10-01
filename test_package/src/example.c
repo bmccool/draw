@@ -6,10 +6,11 @@
 
 
 
-
 int main() {
     printf("Test Draw:\n");
-
+    draw();
+    render();
+    /*
     // Image
     int image_width = 1920;
     int image_height = 1080;
@@ -35,6 +36,6 @@ int main() {
         // Free img
         free(img);
     }
-
+    */
     return 0;
 }
