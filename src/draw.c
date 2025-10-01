@@ -2,16 +2,53 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <windows.h>
-#include "vec3.h"
+//#include "vec3.h"
 #include "draw.h"
 
 #define max_width 1920
 #define max_height 1080
 
-struct Vec3* create_image_stream(int width, int height) {
+static struct Vec3 new(float x, float y, float z) {
+    struct Vec3 v = {x, y, z};
+    return v;
+}
+
+static struct Vec3 add(struct Vec3 a, struct Vec3 b) {
+    return new(a.x + b.x, a.y + b.y, a.z + b.z);
+}
+
+static struct Vec3 subtract(struct Vec3 a, struct Vec3 b) {
+    return new(a.x - b.x, a.y - b.y, a.z - b.z);
+}
+
+static float dot(struct Vec3 a, struct Vec3 b) {
+    return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
+static struct Vec3 cross(struct Vec3 a, struct Vec3 b) {
+    return new(
+        a.y * b.z - a.z * b.y, // X
+        a.z * b.x - a.x * b.z, // Y
+        a.x * b.y - a.y * b.x  // Z
+    );
+}
+
+static uint8_t red(struct Vec3 v) {
+    return (uint8_t)(255.999 * v.x);
+}
+
+static uint8_t green(struct Vec3 v) {
+    return (uint8_t)(255.999 * v.y);
+}
+
+static uint8_t blue(struct Vec3 v) {
+    return (uint8_t)(255.999 * v.z);
+}
+
+Color* create_image_stream(int width, int height) {
     size_t size = width * height; // 1 "Color" struct per pixel (R, G, B)
-    struct Vec3* img;
-    img = (struct Vec3*)malloc(size * sizeof(struct Vec3));
+    Color* img;
+    img = (Color*)malloc(size * sizeof(Color));
     if (img == NULL) {
         fprintf(stderr, "Failed to allocate memory for image\n");
         return NULL;
@@ -19,8 +56,8 @@ struct Vec3* create_image_stream(int width, int height) {
     return img;
 }
 
-struct Vec3* create_gradient_demo_img(int width, int height) {
-    struct Vec3* img = (struct Vec3*)malloc(width * height * sizeof(struct Vec3));
+Color* create_gradient_demo_img(int width, int height) {
+    Color* img = (Color*)malloc(width * height * sizeof(Color));
     if (img == NULL) {
         printf("Failed to allocate memory for image\n");
         return NULL; // Memory allocation failed
@@ -29,7 +66,7 @@ struct Vec3* create_gradient_demo_img(int width, int height) {
     for (int j = 0; j < height; j++) {
         printf("\rScanlines remaining: %d                 ", height - j);
         for (int i = 0; i < width; i++) {
-            struct Vec3 color = { (float)i / (width - 1), (float)j / (height - 1), 0.25f };
+            Color color = { (float)i / (width - 1), (float)j / (height - 1), 0.25f };
             img[j * width + i] = color;
         }
     }
@@ -38,7 +75,7 @@ struct Vec3* create_gradient_demo_img(int width, int height) {
     return img;
 }
 
-void write_img_to_file(const char* filename, struct Vec3* img, int width, int height) {
+void write_img_to_file(const char* filename, Color* img, int width, int height) {
     printf("Writing image to file: %s\n", filename);
     FILE* file = fopen(filename, "wb");
     if (!file) {
@@ -50,16 +87,16 @@ void write_img_to_file(const char* filename, struct Vec3* img, int width, int he
     fprintf(file, "P6\n%d %d\n255\n", width, height);
     for (int j = 0; j < height; j++) {
         for (int i = 0; i < width; i++) {
-            struct Vec3 pixel = img[j * width + i];
-            fputc(Vec3.red(pixel), file);
-            fputc(Vec3.green(pixel), file);
-            fputc(Vec3.blue(pixel), file);
+            Color pixel = img[j * width + i];
+            //fputc(Vec3.red(pixel), file);
+            //fputc(Vec3.green(pixel), file);
+            //fputc(Vec3.blue(pixel), file);
         }
     }
     fclose(file);
 }
 
-void write_img_to_screen(struct Vec3* img, int width, int height) {
+void write_img_to_screen(Color* img, int width, int height) {
     HDC hdesktop = GetDC(0);
     HDC memory_device_context = CreateCompatibleDC(hdesktop);
     HBITMAP hbitmap = CreateCompatibleBitmap(hdesktop, width, height);
@@ -68,8 +105,8 @@ void write_img_to_screen(struct Vec3* img, int width, int height) {
     // Draw to memory device context
     for (int j = 0; j < height; j++) {
         for (int i = 0; i < width; i++) {
-            struct Vec3 pixel = img[j * width + i];
-            SetPixel(memory_device_context, i, j, RGB(Vec3.red(pixel), Vec3.green(pixel), Vec3.blue(pixel)));
+            Color pixel = img[j * width + i];
+            SetPixel(memory_device_context, i, j, RGB(red(pixel), green(pixel), blue(pixel)));
         }
     }
 

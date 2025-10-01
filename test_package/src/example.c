@@ -16,7 +16,7 @@ int main() {
 
     // Render
     printf("Rendering a %dx%d image\n", image_width, image_height);
-    struct Vec3* img = create_gradient_demo_img(image_width, image_height);
+    Color* img = create_gradient_demo_img(image_width, image_height);
     if (img == NULL) {
         printf("Failed to create image\n");
         return 1;
