@@ -4,7 +4,7 @@
 #include <windows.h>
 #include "vec3.h"
 #include "draw.h"
-#include "object.h"
+#include <object.h>
 
 #define max_width 1920
 #define max_height 1080
@@ -52,13 +52,10 @@ void write_img_to_file(const char* filename, Color* img, int width, int height) 
     fprintf(file, "P6\n%d %d\n255\n", width, height);
     for (int j = 0; j < height; j++) {
         for (int i = 0; i < width; i++) {
-            printf("Here: 1\n");
             Color pixel = img[j * width + i];
-            printf("Color pixel: R=%f, G=%f, B=%f\n", pixel.x, pixel.y, pixel.z);
-            printf("Color Pixel after methods: R=%d\n", pixel.red(&pixel));
-            fputc(pixel.red(&pixel), file);
-            fputc(pixel.green(&pixel), file);
-            fputc(pixel.blue(&pixel), file);
+            fputc(red(&pixel), file);
+            fputc(green(&pixel), file);
+            fputc(blue(&pixel), file);
         }
     }
     fclose(file);
@@ -74,7 +71,7 @@ void write_img_to_screen(Color* img, int width, int height) {
     for (int j = 0; j < height; j++) {
         for (int i = 0; i < width; i++) {
             Color pixel = img[j * width + i];
-            SetPixel(memory_device_context, i, j, RGB(pixel.red(&pixel), pixel.green(&pixel), pixel.blue(&pixel)));
+            SetPixel(memory_device_context, i, j, RGB(red(&pixel), green(&pixel), blue(&pixel)));
         }
     }
 
@@ -90,11 +87,13 @@ void write_img_to_screen(Color* img, int width, int height) {
 }
 
 
+
+
 void draw(){
     printf("draw\n");
     printf("Testing Object.h\n");
     Object obj;
-    Object_init(&obj);
+    uint8_t resp = Object_init(&obj);
 }
 
 void render(){

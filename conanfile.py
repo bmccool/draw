@@ -57,7 +57,10 @@ class drawRecipe(ConanFile):
         print(f"From: {join(self.source_folder, 'include')} To: {join(self.package_folder, 'include')}")
         copy(self, "*.h", join(self.source_folder, "include"), join(self.package_folder, "include"))
         copy(self, "*.c", join(self.source_folder, "src"), join(self.package_folder, "src"))
+        copy(self, "*.lib", src=join(self.build_folder, "lib"), dst=join(self.package_folder, "lib"))
 
     def package_info(self):
         self.cpp_info.libs = ["draw"]
+        self.cpp_info.libdirs = ["lib"]
+        self.cpp_info.srcdirs = ["src"]
 
