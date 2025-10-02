@@ -4,11 +4,11 @@
 #include <stdint.h>
 
 // Instance Type
-struct Vec3 {
+typedef struct Vec3 {
     float x;
     float y;
     float z;
-};
+} Vec3;
 
 // Class Object
 extern const struct Vec3Class{
@@ -20,10 +20,9 @@ extern const struct Vec3Class{
     uint8_t (*red)(struct Vec3 *this);
     uint8_t (*green)(struct Vec3 *this);
     uint8_t (*blue)(struct Vec3 *this);
-} Vec3;
+} Vec3Class;
 
-typedef struct Vec3 Color;
-extern const struct Vec3Class ColorClass;
+
 
 static struct Vec3 new(float x, float y, float z) {
     struct Vec3 v = {x, y, z};
@@ -50,6 +49,10 @@ static struct Vec3 cross(struct Vec3 a, struct Vec3 b) {
     );
 }
 
+static struct Vec3 multiply(struct Vec3 v, float t) {
+    return new(v.x * t, v.y * t, v.z * t);
+}
+
 static uint8_t red(struct Vec3 *this) {
     return (uint8_t)(255.999 * this->x);
 }
@@ -61,5 +64,7 @@ static uint8_t green(struct Vec3 *this) {
 static uint8_t blue(struct Vec3 *this) {
     return (uint8_t)(255.999 * this->z);
 }
+
+
 
 #endif // VEC3_H

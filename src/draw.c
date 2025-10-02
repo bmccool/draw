@@ -4,7 +4,7 @@
 #include <windows.h>
 #include "vec3.h"
 #include "draw.h"
-#include <object.h>
+#include "color.h"
 
 #define max_width 1920
 #define max_height 1080
@@ -76,7 +76,7 @@ void write_img_to_screen(Color* img, int width, int height) {
     }
 
     // BitBlt to screen
-    for (int i = 0; i < 1000000; i++) { // Simple delay loop
+    for (int i = 0; i < 25000; i++) { // Simple delay loop
         BitBlt(hdesktop, 0, 0, width, height, memory_device_context, 0, 0, SRCCOPY);
     }
 
@@ -86,14 +86,8 @@ void write_img_to_screen(Color* img, int width, int height) {
     ReleaseDC(0, hdesktop);
 }
 
-
-
-
 void draw(){
     printf("draw\n");
-    printf("Testing Object.h\n");
-    Object obj;
-    uint8_t resp = Object_init(&obj);
 }
 
 void render(){

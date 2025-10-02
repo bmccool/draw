@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <vec3.h>
+#include "color.h"
 
 void draw();
 void render();

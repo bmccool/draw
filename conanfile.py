@@ -52,8 +52,6 @@ class drawRecipe(ConanFile):
     def package(self):
         cmake = CMake(self)
         cmake.install()
-        print("===================================================================================")
-        print("Copying header files...")
         print(f"From: {join(self.source_folder, 'include')} To: {join(self.package_folder, 'include')}")
         copy(self, "*.h", join(self.source_folder, "include"), join(self.package_folder, "include"))
         copy(self, "*.c", join(self.source_folder, "src"), join(self.package_folder, "src"))
