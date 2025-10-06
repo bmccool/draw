@@ -4,4 +4,5 @@ project(PackageTest C)
 find_package(draw CONFIG REQUIRED)
 
 add_executable(example src/example.c)
+target_include_directories(example PRIVATE include)
 target_link_libraries(example PUBLIC draw::draw)

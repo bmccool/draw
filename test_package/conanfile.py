@@ -3,6 +3,7 @@ import os
 from conan import ConanFile
 from conan.tools.cmake import CMake, cmake_layout
 from conan.tools.build import can_run
+from conan.tools.files import copy
 
 
 class drawTestConan(ConanFile):
@@ -13,12 +14,13 @@ class drawTestConan(ConanFile):
         print("REQUIREMENTS!!!!!!!!!!!------------")
         print(f"Reference is {self.tested_reference_str}")
         self.requires(self.tested_reference_str)
+        self.requires("cmocka/1.1.8", test=True)
 
     def build(self):
         cmake = CMake(self)
         cmake.configure()
-        cmake.build(cli_args=["--verbose"])
-        #cmake.build()
+        #cmake.build(cli_args=["--verbose"])
+        cmake.build()
 
     def layout(self):
         cmake_layout(self)

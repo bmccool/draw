@@ -3,10 +3,31 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <draw.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <setjmp.h>
+#include <cmocka.h>
+
+#include "test_color.h"
+#include "test_vec3.h"
 
 
+/* A test case that does nothing and succeeds. */
+static void null_test_success(void **state) {
+    (void) state; /* unused */
+}
+int main(void) {
+    const struct CMUnitTest tests[] = {
+        cmocka_unit_test(null_test_success),
+        cmocka_unit_test(test_vec3),
+        cmocka_unit_test(test_color),
+    };
+    int ret_val = cmocka_run_group_tests(tests, NULL, NULL);
 
-int main() {
+
+}
+
+int main_old() {
     printf("Test Draw:\n");
 
     
