@@ -53,9 +53,9 @@ void write_img_to_file(const char* filename, Color* img, int width, int height) 
     for (int j = 0; j < height; j++) {
         for (int i = 0; i < width; i++) {
             Color pixel = img[j * width + i];
-            fputc(red(&pixel), file);
-            fputc(green(&pixel), file);
-            fputc(blue(&pixel), file);
+            fputc(color_red(&pixel), file);
+            fputc(color_green(&pixel), file);
+            fputc(color_blue(&pixel), file);
         }
     }
     fclose(file);
@@ -71,7 +71,7 @@ void write_img_to_screen(Color* img, int width, int height) {
     for (int j = 0; j < height; j++) {
         for (int i = 0; i < width; i++) {
             Color pixel = img[j * width + i];
-            SetPixel(memory_device_context, i, j, RGB(red(&pixel), green(&pixel), blue(&pixel)));
+            SetPixel(memory_device_context, i, j, color_rgb(&pixel));
         }
     }
 
