@@ -22,12 +22,12 @@ Color* create_image_stream(int width, int height) {
 }
 
 Color* create_gradient_demo_img(int width, int height) {
-    Color* img = (Color*)malloc(width * height * sizeof(Color));
+    Color* img = create_image_stream(width, height);
     if (img == NULL) {
-        printf("Failed to allocate memory for image\n");
-        return NULL; // Memory allocation failed
+        return NULL;
     }
 
+    printf("Creating gradient demo image...\n");
     for (int j = 0; j < height; j++) {
         printf("\rScanlines remaining: %d                 ", height - j);
         for (int i = 0; i < width; i++) {
@@ -93,4 +93,3 @@ void draw(){
 void render(){
     printf("render\n");
 }
-

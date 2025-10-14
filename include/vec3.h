@@ -2,6 +2,7 @@
 #define VEC3_H
 
 #include <stdint.h>
+#include <math.h>
 
 // Instance Type
 typedef struct Vec3 {
@@ -9,7 +10,6 @@ typedef struct Vec3 {
     float y;
     float z;
 } Vec3;
-
 
 static struct Vec3 vec3_new(float x, float y, float z) {
     struct Vec3 v = {x, y, z};
@@ -38,6 +38,15 @@ static struct Vec3 vec3_cross(struct Vec3 a, struct Vec3 b) {
 
 static struct Vec3 vec3_multiply(struct Vec3 v, float t) {
     return vec3_new(v.x * t, v.y * t, v.z * t);
+}
+
+static struct Vec3 vec3_divide(struct Vec3 v, float t) {
+    return vec3_new(v.x / t, v.y / t, v.z / t);
+}
+
+static struct Vec3 unit_vector(struct Vec3 v) {
+    float length = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
+    return vec3_divide(v, length);
 }
 
 #endif // VEC3_H
