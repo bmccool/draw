@@ -5,6 +5,7 @@
 #include <point.h>
 #include <hittable.h>
 #include <ray.h>
+#include <interval.h>
 
 
 typedef struct Sphere {
@@ -14,7 +15,7 @@ typedef struct Sphere {
 } Sphere;
 
 
-static bool sphere_hit(Hittable* this, Ray* r, float t_min, float t_max, Hit_record* rec) {
+static bool sphere_hit(Hittable* this, Ray* r, Interval ray_t, Hit_record* rec) {
     // Return true if the ray hits the sphere between ray_t_min and ray_t_max
     // If hit, fill in the rec with the hit record details
     struct Sphere *s = (struct Sphere *)this->obj;
@@ -31,9 +32,9 @@ static bool sphere_hit(Hittable* this, Ray* r, float t_min, float t_max, Hit_rec
 
     // Find the nearest root that lies in the acceptable range.
     float root = (h - sqrt_d) / a;
-    if (root <= t_min || t_max <= root){
+    if (!interval_surrounds(&ray_t, root)) {
         root = (h + sqrt_d) / a;
-        if (root <= t_min || t_max <= root){
+        if (!interval_surrounds(&ray_t, root)){
             return false;
         }
     }

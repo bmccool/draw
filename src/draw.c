@@ -5,9 +5,16 @@
 #include "vec3.h"
 #include "draw.h"
 #include "color.h"
+#include <time.h>
 
 #define max_width 1920
 #define max_height 1080
+
+
+inline float degrees_to_radians(float degrees) {
+    return degrees * (draw_pi / 180.0);
+}
+
 
 
 Color* create_image_stream(int width, int height) {

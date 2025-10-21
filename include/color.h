@@ -3,21 +3,24 @@
 
 #include <windows.h> // RGB macro
 #include "vec3.h"
+#include "interval.h"
 
 typedef struct Color {
     struct Vec3 vec;
 } Color;
 
+static Interval intensity = {0.0f, 0.999f};
+
 static uint8_t color_red(struct Color *this) {
-    return (uint8_t)(255.999 * this->vec.x);
+    return (uint8_t)(255.999 * interval_clamp(&intensity, this->vec.x));
 }
 
 static uint8_t color_green(struct Color *this) {
-    return (uint8_t)(255.999 * this->vec.y);
+    return (uint8_t)(255.999 * interval_clamp(&intensity, this->vec.y));
 }
 
 static uint8_t color_blue(struct Color *this) {
-    return (uint8_t)(255.999 * this->vec.z);
+    return (uint8_t)(255.999 * interval_clamp(&intensity, this->vec.z));
 }
 
 static struct Color color_new(float r, float g, float b) {

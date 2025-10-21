@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "ray.h"
+#include "interval.h"
 
 
 typedef struct Hit_record {
@@ -34,6 +35,6 @@ typedef struct Hittable {
 // Hittable Type - a function pointer that takes a void* argument and returns a bool
 // Convention: the void* argument should be a struct containing all necessary data for the hit test
 // See Sphere.h for an example implementation
-typedef bool (*Hit)(Hittable* this, Ray* r, float t_min, float t_max, Hit_record* rec);
+typedef bool (*Hit)(Hittable* this, Ray* r, Interval ray_time, Hit_record* rec);
 
 #endif // HITTABLE_H

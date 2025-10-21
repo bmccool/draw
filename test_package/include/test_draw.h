@@ -6,6 +6,8 @@
 #include <sphere.h>
 #include <hittable_list.h>
 #include <hittable.h>
+#include <interval.h>
+#include "camera.h"
 
 int draw_gradient() {
     printf("Test Draw:\n");
@@ -56,84 +58,42 @@ float hit_sphere(struct Point3 center, float radius, struct Ray r) {
     }
 }
 
-Color ray_color(struct Ray r) {
-    //float t = hit_sphere(point3_new(0,0,-1), 0.5, r);
-
-    Sphere s = sphere_new(point3_new(0,0,-1), 0.5);
-    Hittable h = {HITTABLE_SPHERE, &s};
-    Hittable_list world = hittable_list_new(1);
-    world.objects[0] = h;
-    
-    struct Hit_record rec;
-    if (list_hit(&world, &r, 0.001, 1000, &rec)) {
-        Vec3 normal = unit_vector(rec.normal);
-        return color_multiply(color_new(normal.x + 1, normal.y + 1, normal.z + 1), 0.5);
-    }
-
-    //float t = s.hit(&h, &r, 0.001, 1000, &rec);
-    //if (t > 0.0) {
-    //    Vec3 normal = unit_vector(vec3_subtract(r.at(&r, t).vec, point3_new(0,0,-1).vec));
-    //    return color_multiply(color_new(normal.x + 1, normal.y + 1, normal.z + 1), 0.5);
-    //}
 
 
-    Vec3 unit_direction = unit_vector(r.direction);
-    float a = 0.5 * (unit_direction.y + 1.0);
-    // Lerp from (1, 1, 1) to (0.5, 0.7, 1.0) based on the Y direction
-    return color_lerp(a, color_new(1.0, 1.0, 1.0), color_new(0.5, 0.7, 1.0));
-}
-
-int test_4_2(void **state) {
+int test_main(void **state) {
     /* Sending Rays Into the Scene */
     (void) state; /* unused */
 
-    // Image
-    int image_width = 1920;
-    int image_height = 1080;
-    float aspect_ratio = (float)image_width / (float)image_height;
+    Camera cam = camera_init();
 
-    // Camera
-    float focal_length = 1.0;
-    float viewport_height = 2;
-    float viewport_width = viewport_height * ((float)(image_width))/image_height;
-    Point3 camera_center = point3_new(0, 0, 0);
-
-    // Calculate the vectors across the horizontal and down the vertical viewport edges.
-    Vec3 viewport_u = vec3_new(viewport_width, 0, 0);
-    Vec3 viewport_v = vec3_new(0, -viewport_height, 0);
-
-    // Calculate the horizontal and vertical delta vectors from pixel to pixel.
-    Vec3 pixel_delta_u = vec3_divide(viewport_u, (float)image_width);
-    Vec3 pixel_delta_v = vec3_divide(viewport_v, (float)image_height);
-
-    // Calculate the location of the upper left pixel.
-    Point3 viewport_upper_left = point3_subtract(camera_center, point3_new(0, 0, focal_length));
-    viewport_upper_left = point3_subtract(viewport_upper_left, point3_from_vec3(vec3_divide(viewport_u, 2)));
-    viewport_upper_left = point3_subtract(viewport_upper_left, point3_from_vec3(vec3_divide(viewport_v, 2)));
-    Point3 pixel00_loc = point3_add(viewport_upper_left, point3_from_vec3(vec3_multiply(vec3_add(pixel_delta_u, pixel_delta_v), 0.5)));
+    // Create World
+    Hittable_list world = hittable_list_new(2);
+    hittable_list_add_sphere(&world, 0, 0, -1, 0.5);
+    hittable_list_add_sphere(&world, 0, -100.5, -1, 100);
 
     // Render
-    printf("Rendering a %dx%d image\n255\n", image_width, image_height);
-
-    // Create the image pixels in memory
-    Color* img = create_image_stream(image_width, image_height);
-
-    for (int j = 0; j < image_height; j++) {
-        printf("\rScanlines remaining: %d ", (image_height - j));
-        for (int i = 0; i < image_width; i++) {
-            Point3 pixel_center = point3_add(pixel00_loc, point3_from_vec3(vec3_add(vec3_multiply(pixel_delta_u, (float)i), vec3_multiply(pixel_delta_v, (float)j))));
-            Vec3 ray_direction = vec3_from_point3s(pixel_center, camera_center);
-            Ray r = ray_new(camera_center, ray_direction);
-
-            Color pixel_color = ray_color(r);
-            img[j * image_width + i] = pixel_color;
-        }
-    }
+    Color* img = camera_render(&cam, &world);
 
     printf("\rDone.                 \n");
-    write_img_to_file("output.ppm", img, image_width, image_height);
-    write_img_to_screen(img, image_width, image_height);
+    write_img_to_file("output.ppm", img, cam.image_width, cam.image_height);
+    write_img_to_screen(img, cam.image_width, cam.image_height);
     free(img);
 
+    return 0;
+}
+
+int test_random_bounded_float(void **state) {
+    (void) state; /* unused */
+
+    for (int i = 0; i < 10; i++) {
+        float r = random_bounded_float(-1, 1);
+        if (r < -1.0f || r >= 1.0f) {
+            printf("Test failed: random_bounded_float returned %f which is out of bounds\n", r);
+            return 1;
+        }
+        else {
+            printf("Random bounded float %d: %f\n", i, r);
+        }
+    }
     return 0;
 }

@@ -27,7 +27,8 @@ int main(void) {
         cmocka_unit_test(test_new_point),
         cmocka_unit_test(test_new_ray),
         cmocka_unit_test(test_ray_at),
-        cmocka_unit_test(test_4_2),
+        cmocka_unit_test(test_random_bounded_float),
+        cmocka_unit_test(test_main),
         //cmocka_unit_test(draw_gradient),
     };
     int ret_val = cmocka_run_group_tests(tests, NULL, NULL);
