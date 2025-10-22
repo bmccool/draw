@@ -4,6 +4,7 @@
 #include <windows.h> // RGB macro
 #include "vec3.h"
 #include "interval.h"
+#include <math.h>
 
 typedef struct Color {
     struct Vec3 vec;
@@ -11,16 +12,20 @@ typedef struct Color {
 
 static Interval intensity = {0.0f, 0.999f};
 
+static inline float linear_to_gamma(float value) {
+    return sqrtf(value);
+}
+
 static uint8_t color_red(struct Color *this) {
-    return (uint8_t)(255.999 * interval_clamp(&intensity, this->vec.x));
+    return (uint8_t)(255.999 * linear_to_gamma(interval_clamp(&intensity, this->vec.x)));
 }
 
 static uint8_t color_green(struct Color *this) {
-    return (uint8_t)(255.999 * interval_clamp(&intensity, this->vec.y));
+    return (uint8_t)(255.999 * linear_to_gamma(interval_clamp(&intensity, this->vec.y)));
 }
 
 static uint8_t color_blue(struct Color *this) {
-    return (uint8_t)(255.999 * interval_clamp(&intensity, this->vec.z));
+    return (uint8_t)(255.999 * linear_to_gamma(interval_clamp(&intensity, this->vec.z)));
 }
 
 static struct Color color_new(float r, float g, float b) {

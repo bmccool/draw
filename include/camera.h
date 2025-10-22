@@ -10,6 +10,7 @@
 #include "draw.h"
 
 #define MAX_DEPTH 10
+#define MIN_DISTANCE 0.001
 
 typedef struct Camera {
     int image_height;      // Rendered image height
@@ -31,15 +32,11 @@ Color ray_color(Ray* r, int depth, Hittable_list* world) {
     }
 
     struct Hit_record rec;
-    if (list_hit(world, r, interval_new(0, draw_infinity), &rec)) {
-        //printf("Hit at t=%f\n", rec.t);
-        Vec3 direction = vec3_random_on_hemisphere(&rec.normal);
-        //printf("Scattered direction: (%f, %f, %f)\n", direction.x, direction.y, direction.z);
+    if (list_hit(world, r, interval_new(MIN_DISTANCE, draw_infinity), &rec)) {
+        //Vec3 direction = vec3_random_on_hemisphere(&rec.normal);
+        Vec3 direction = vec3_add(rec.normal, vec3_random_unit_vector());
         Ray scattered = ray_new(rec.p, direction);
-        //printf("Scattered ray origin: (%f, %f, %f)\n", scattered.origin.vec.x, scattered.origin.vec.y, scattered.origin.vec.z);
         return color_multiply(ray_color(&scattered, depth - 1, world), 0.5);
-        //Vec3 normal = unit_vector(rec.normal);
-        //return color_multiply(color_new(normal.x + 1, normal.y + 1, normal.z + 1), 0.5);
     }
 
     Vec3 unit_direction = unit_vector(r->direction);

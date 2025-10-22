@@ -61,7 +61,7 @@ static Vec3 vec3_bounded_random(float min_bound, float max_bound) {
     return vec3_new(x, y, z);
 }
 
-static Vec3 vec3_random_unit() {
+static Vec3 vec3_random_unit_vector() {
     while (1) {
         Vec3 p = vec3_bounded_random(-1, 1);
         float len_squared = vec3_dot(p, p);
@@ -72,7 +72,7 @@ static Vec3 vec3_random_unit() {
 }
 
 static Vec3 vec3_random_on_hemisphere(Vec3* normal) {
-    Vec3 on_unit_sphere = vec3_random_unit();
+    Vec3 on_unit_sphere = vec3_random_unit_vector();
     if (vec3_dot(on_unit_sphere, *normal) > 0.0) {
         return on_unit_sphere;
     }
