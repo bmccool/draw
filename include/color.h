@@ -58,4 +58,10 @@ static struct Color color_lerp(float blend, struct Color start, struct Color end
     return color_add(t1, t2);
 }
 
+static struct Color color_elementwise_multiply(struct Color a, struct Color b) {
+    struct Vec3 result_vec = vec3_new(a.vec.x * b.vec.x, a.vec.y * b.vec.y, a.vec.z * b.vec.z);
+    struct Color result = {result_vec};
+    return result;
+}
+
 #endif // COLOR_H

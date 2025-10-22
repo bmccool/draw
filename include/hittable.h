@@ -5,12 +5,14 @@
 #include "ray.h"
 #include "interval.h"
 
+struct Material; // Forward declaration
 
 typedef struct Hit_record {
     Point3 p;
     Vec3 normal;
     float t;
     bool front_face;
+    struct Material* material_type;
 } Hit_record;
 
 void set_face_normal(Hit_record *rec, Ray *r, Vec3 outward_normal) {
@@ -29,6 +31,7 @@ void set_face_normal(Hit_record *rec, Ray *r, Vec3 outward_normal) {
 
 typedef struct Hittable {
     uint8_t hittable_type; // Type of hittable object
+    struct Material* material_type; // Material type of the hittable object
     void *obj;           // Pointer to the actual object (e.g., Sphere)
 }Hittable;
 

@@ -8,6 +8,7 @@
 #include "point.h"
 #include "vec3.h"
 #include "draw.h"
+#include "material.h"
 
 #define MAX_DEPTH 10
 #define MIN_DISTANCE 0.001
@@ -33,10 +34,12 @@ Color ray_color(Ray* r, int depth, Hittable_list* world) {
 
     struct Hit_record rec;
     if (list_hit(world, r, interval_new(MIN_DISTANCE, draw_infinity), &rec)) {
-        //Vec3 direction = vec3_random_on_hemisphere(&rec.normal);
-        Vec3 direction = vec3_add(rec.normal, vec3_random_unit_vector());
-        Ray scattered = ray_new(rec.p, direction);
-        return color_multiply(ray_color(&scattered, depth - 1, world), 0.5);
+        Ray scattered;
+        Color attenuation;
+        if (material_scatter(rec.material_type, r, &rec, &attenuation, &scattered)) {
+            return color_elementwise_multiply(ray_color(&scattered, depth - 1, world), attenuation);
+        }
+        return color_new(0, 0, 0);
     }
 
     Vec3 unit_direction = unit_vector(r->direction);

@@ -81,4 +81,10 @@ static Vec3 vec3_random_on_hemisphere(Vec3* normal) {
     }
 }
 
+static bool vec3_near_zero(Vec3 v) {
+    // Return true if the vector is close to zero in all dimensions.
+    const float s = 1e-8;
+    return (fabs(v.x) < s) && (fabs(v.y) < s) && (fabs(v.z) < s);
+}
+
 #endif // VEC3_H

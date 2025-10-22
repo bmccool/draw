@@ -15,10 +15,10 @@ typedef struct Sphere {
 } Sphere;
 
 
-static bool sphere_hit(Hittable* this, Ray* r, Interval ray_t, Hit_record* rec) {
+static bool sphere_hit(Hittable* this_sphere, Ray* r, Interval ray_t, Hit_record* rec) {
     // Return true if the ray hits the sphere between ray_t_min and ray_t_max
     // If hit, fill in the rec with the hit record details
-    struct Sphere *s = (struct Sphere *)this->obj;
+    struct Sphere *s = (struct Sphere *)this_sphere->obj;
 
     Vec3 oc = vec3_from_point3s(s->center, r->origin);
     float a = vec3_dot(r->direction, r->direction);
@@ -43,6 +43,7 @@ static bool sphere_hit(Hittable* this, Ray* r, Interval ray_t, Hit_record* rec) 
     rec->p = r->at(r, rec->t);
     rec->normal = vec3_divide(vec3_subtract(rec->p.vec, s->center.vec), s->radius);
     set_face_normal(rec, r, rec->normal);
+    rec->material_type = this_sphere->material_type;
     return true;
 }
 

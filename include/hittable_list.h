@@ -6,6 +6,7 @@
 #include "interval.h"
 #include "hittable.h"
 #include "sphere.h" // Include the header for Sphere to use its hit function
+#include "material.h"
 
 #define HITTABLE_SPHERE 1
 
@@ -30,11 +31,11 @@ static void hittable_list_add(struct Hittable_list *this_list, struct Hittable n
     // TODO what happens if index >= size?
 }
 
-static void hittable_list_add_sphere(struct Hittable_list *this_list, float x, float y, float z, float radius) {
+static void hittable_list_add_sphere(struct Hittable_list *this_list, float x, float y, float z, float radius, Material *material) {
     if (this_list->index < this_list->size) {
         Sphere* s = (Sphere*)malloc(sizeof(Sphere));
         *s = sphere_new(point3_new(x, y, z), radius);
-        struct Hittable h = {HITTABLE_SPHERE, s};
+        struct Hittable h = {HITTABLE_SPHERE, material, s};
         this_list->objects[this_list->index] = h;
         this_list->index += 1;
     }
