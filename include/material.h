@@ -49,10 +49,25 @@ static bool metal_scatter(Material* this_material, Ray* ray_in, Hit_record* rec,
 }
 
 static bool dielectric_scatter(Material* this_material, Ray* ray_in, Hit_record* rec, Color* attenuation, Ray* scattered) {
-    float refraction_ratio = rec->front_face ? (1.0 / this_material->refraction_idx) : this_material->refraction_idx;
+    float relative_ref_idx = rec->front_face ? (1.0 / this_material->refraction_idx) : this_material->refraction_idx;
     Vec3 unit_direction = unit_vector(ray_in->direction);
-    Vec3 refracted = vec3_refract(unit_direction, rec->normal, refraction_ratio);
-    *scattered = ray_new(rec->p, refracted);
+
+    // Can this ray refract?
+    float cos_theta = fminf(vec3_dot(vec3_multiply(unit_direction, -1), rec->normal), 1.0);
+    float sin_theta = sqrtf(1.0 - (cos_theta * cos_theta));
+    bool cannot_refract = (relative_ref_idx * sin_theta) > 1.0;
+    Vec3 direction;
+
+    if (cannot_refract) {
+        // Must reflect (Total Internal Reflection)
+        direction = vec3_reflect(unit_direction, rec->normal);
+    }
+    else {
+        // Refract
+        direction = vec3_refract(unit_direction, rec->normal, relative_ref_idx);
+    }
+
+    *scattered = ray_new(rec->p, direction);
     *attenuation = color_new(1.0, 1.0, 1.0);
     return true;
 }

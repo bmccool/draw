@@ -70,7 +70,7 @@ int test_main(void **state) {
     Hittable_list world = hittable_list_new(4);
     Material lambertian_red = material_lambertian(color_new(0.7, 0.3, 0.3));
     Material lambertian_green = material_lambertian(color_new(0.3, 0.7, 0.3));
-    Material metalic_left = material_dielectric(1.5); // Refraction Index 1.5 (glass)
+    Material metalic_left = material_dielectric(1.00 / 1.33); // World of water (1.33) RI of glass (1.00)
     Material metallic_gold = material_metal(color_new(0.8, 0.6, 0.2), 0.0);  // Fuzz factor 0.0 (mirror)
     hittable_list_add_sphere(&world,  0,       0,   -1,   0.5, &lambertian_red);
     hittable_list_add_sphere(&world,  0,    -100.5, -1, 100,   &lambertian_green);
