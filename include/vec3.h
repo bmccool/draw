@@ -92,4 +92,11 @@ static Vec3 vec3_reflect(Vec3 v, Vec3 n) {
     return vec3_subtract(v, vec3_multiply(n, 2 * vec3_dot(v, n)));
 }
 
+static Vec3 vec3_refract(Vec3 uv, Vec3 n, float etai_over_etat) {
+    float cos_theta = fminf(vec3_dot(vec3_multiply(uv, -1), n), 1.0);
+    Vec3 r_out_perp = vec3_multiply(vec3_add(uv, vec3_multiply(n, cos_theta)), etai_over_etat);
+    Vec3 r_out_parallel = vec3_multiply(n, -sqrtf(fabsf(1.0 - vec3_dot(r_out_perp, r_out_perp))));
+    return vec3_add(r_out_perp, r_out_parallel);
+}
+
 #endif // VEC3_H
