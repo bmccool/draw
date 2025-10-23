@@ -87,4 +87,9 @@ static bool vec3_near_zero(Vec3 v) {
     return (fabs(v.x) < s) && (fabs(v.y) < s) && (fabs(v.z) < s);
 }
 
+static Vec3 vec3_reflect(Vec3 v, Vec3 n) {
+    // Reflect vector v around normal n
+    return vec3_subtract(v, vec3_multiply(n, 2 * vec3_dot(v, n)));
+}
+
 #endif // VEC3_H

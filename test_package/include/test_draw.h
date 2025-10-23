@@ -67,11 +67,15 @@ int test_main(void **state) {
     Camera cam = camera_init();
 
     // Create World
-    Hittable_list world = hittable_list_new(2);
+    Hittable_list world = hittable_list_new(4);
     Material lambertian_red = material_lambertian(color_new(0.7, 0.3, 0.3));
     Material lambertian_green = material_lambertian(color_new(0.3, 0.7, 0.3));
-    hittable_list_add_sphere(&world, 0, 0, -1, 0.5, &lambertian_red);
-    hittable_list_add_sphere(&world, 0, -100.5, -1, 100, &lambertian_green);
+    Material metalic_silver = material_metal(color_new(0.8, 0.8, 0.8));
+    Material metallic_gold = material_metal(color_new(0.8, 0.6, 0.2));
+    hittable_list_add_sphere(&world,  0,       0,   -1,   0.5, &lambertian_red);
+    hittable_list_add_sphere(&world,  0,    -100.5, -1, 100,   &lambertian_green);
+    hittable_list_add_sphere(&world, -1,       0,   -1,   0.5, &metalic_silver);
+    hittable_list_add_sphere(&world,  1,       0,   -1,   0.5, &metallic_gold);
 
     // Render
     Color* img = camera_render(&cam, &world);
