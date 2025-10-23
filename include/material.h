@@ -48,6 +48,13 @@ static bool metal_scatter(Material* this_material, Ray* ray_in, Hit_record* rec,
     return vec3_dot(scattered->direction, rec->normal) > 0;
 }
 
+static float reflectance(float cosine, float reefraction_index){
+    // Use Schlick's approximation for reflectance.
+    float r0 = (1 - reefraction_index) / (1 + reefraction_index);
+    r0 = r0 * r0;
+    return r0 + (1 - r0) * powf((1 - cosine), 5);
+}
+
 static bool dielectric_scatter(Material* this_material, Ray* ray_in, Hit_record* rec, Color* attenuation, Ray* scattered) {
     float relative_ref_idx = rec->front_face ? (1.0 / this_material->refraction_idx) : this_material->refraction_idx;
     Vec3 unit_direction = unit_vector(ray_in->direction);
@@ -58,7 +65,7 @@ static bool dielectric_scatter(Material* this_material, Ray* ray_in, Hit_record*
     bool cannot_refract = (relative_ref_idx * sin_theta) > 1.0;
     Vec3 direction;
 
-    if (cannot_refract) {
+    if (cannot_refract || reflectance(cos_theta, relative_ref_idx) > random_float()) {
         // Must reflect (Total Internal Reflection)
         direction = vec3_reflect(unit_direction, rec->normal);
     }

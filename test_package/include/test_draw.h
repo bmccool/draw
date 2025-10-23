@@ -67,15 +67,17 @@ int test_main(void **state) {
     Camera cam = camera_init();
 
     // Create World
-    Hittable_list world = hittable_list_new(4);
+    Hittable_list world = hittable_list_new(5);
     Material lambertian_red = material_lambertian(color_new(0.7, 0.3, 0.3));
     Material lambertian_green = material_lambertian(color_new(0.3, 0.7, 0.3));
-    Material metalic_left = material_dielectric(1.00 / 1.33); // World of water (1.33) RI of glass (1.00)
+    Material dielectric_glass = material_dielectric(1.50); // World of water (1.33) RI of glass (1.00)
+    Material dielectric_bubble = material_dielectric(1.00 / 1.50); // Glass bubble in air
     Material metallic_gold = material_metal(color_new(0.8, 0.6, 0.2), 0.0);  // Fuzz factor 0.0 (mirror)
     hittable_list_add_sphere(&world,  0,       0,   -1,   0.5, &lambertian_red);
     hittable_list_add_sphere(&world,  0,    -100.5, -1, 100,   &lambertian_green);
-    hittable_list_add_sphere(&world, -1,       0,   -1,   0.5, &metalic_left);
+    hittable_list_add_sphere(&world, -1,       0,   -1,   0.5, &dielectric_glass);
     hittable_list_add_sphere(&world,  1,       0,   -1,   0.5, &metallic_gold);
+    hittable_list_add_sphere(&world, -1,       0,   -1,   0.4, &dielectric_bubble); // Hollow glass bubble
 
     // Render
     Color* img = camera_render(&cam, &world);
