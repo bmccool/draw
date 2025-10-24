@@ -99,4 +99,8 @@ static Vec3 vec3_refract(Vec3 uv, Vec3 n, float relative_ref_idx) {
     return vec3_add(r_out_perp, r_out_parallel);
 }
 
+static float vec3_magnitude(Vec3 v) {
+    return sqrtf(vec3_dot(v, v));
+}
+
 #endif // VEC3_H

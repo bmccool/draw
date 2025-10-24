@@ -23,6 +23,12 @@ typedef struct Camera {
     int image_width;       // Rendered image width in pixel count
     int samples_per_pixel; // Number of samples per pixel for anti-aliasing
     float pixel_samples_scale; // Scale factor for averaging samples (1.0 / samples_per_pixel)
+    float vfov;               // Vertical field of view angle in degrees
+    Point3 look_from;        // Camera position
+    Point3 look_at;          // Point camera is looking at
+    Vec3 up;                 // Up vector
+    Vec3 u, v, w;          // Camera coordinate frame basis vectors
+
 } Camera;
 
 Color ray_color(Ray* r, int depth, Hittable_list* world) {
@@ -48,7 +54,13 @@ Color ray_color(Ray* r, int depth, Hittable_list* world) {
     return color_lerp(a, color_new(1.0, 1.0, 1.0), color_new(0.5, 0.7, 1.0));
 }
 
-static struct Camera camera_init() {
+static float degrees_to_radians(float degrees) {
+    return degrees * (draw_pi / 180.0);
+}
+
+
+
+void camera_init(Camera *cam) {
 
     // Image
     int image_width = 1920;
@@ -56,30 +68,58 @@ static struct Camera camera_init() {
     int samples_per_pixel = 100;
     float aspect_ratio = (float)image_width / (float)image_height;
 
-    // Camera
-    float focal_length = 1.0;
-    float viewport_height = 2;
+    // Determine Viewport dimensions
+    float h = tanf(degrees_to_radians(cam->vfov) / 2);
+
+    float focal_length = vec3_magnitude(vec3_from_point3s(cam->look_from, cam->look_at));
+
+    float viewport_height = 2 * h * focal_length;
     float viewport_width = viewport_height * ((float)(image_width))/image_height;
-    Point3 camera_center = point3_new(0, 0, 0);
+
+    // Calculate the u,v,w unit basis vectors for the camera coordinate frame
+    Vec3 w = unit_vector(vec3_subtract(cam->look_from.vec, cam->look_at.vec));
+    Vec3 u = unit_vector(vec3_cross(cam->up, w));
+    Vec3 v = vec3_cross(w, u);
 
     // Calculate the vectors across the horizontal and down the vertical viewport edges.
-    Vec3 viewport_u = vec3_new(viewport_width, 0, 0);
-    Vec3 viewport_v = vec3_new(0, -viewport_height, 0);
+    Vec3 viewport_u = vec3_multiply(u, viewport_width);
+    Vec3 viewport_v = vec3_multiply(v, viewport_height);
 
     // Calculate the horizontal and vertical delta vectors from pixel to pixel.
     Vec3 pixel_delta_u = vec3_divide(viewport_u, (float)image_width);
     Vec3 pixel_delta_v = vec3_divide(viewport_v, (float)image_height);
 
     // Calculate the location of the upper left pixel.
-    Point3 viewport_upper_left = point3_subtract(camera_center, point3_new(0, 0, focal_length));
+    Point3 viewport_upper_left = point3_subtract(cam->look_from, point3_from_vec3(vec3_multiply(w, focal_length)));
     viewport_upper_left = point3_subtract(viewport_upper_left, point3_from_vec3(vec3_divide(viewport_u, 2)));
     viewport_upper_left = point3_subtract(viewport_upper_left, point3_from_vec3(vec3_divide(viewport_v, 2)));
     Point3 pixel00_loc = point3_add(viewport_upper_left, point3_from_vec3(vec3_multiply(vec3_add(pixel_delta_u, pixel_delta_v), 0.5)));
     float pixel_samples_scale = 1.0f / (float)samples_per_pixel;
 
-    Camera cam = {image_height, camera_center, pixel00_loc, pixel_delta_u, pixel_delta_v , aspect_ratio, image_width, samples_per_pixel, pixel_samples_scale};
+    cam->image_height = image_height;
+    cam->center = cam->look_from;
+    cam->pixel00_loc = pixel00_loc;
+    cam->pixel_delta_u = pixel_delta_u;
+    cam->pixel_delta_v = pixel_delta_v;
+    cam->aspect_ratio = aspect_ratio;
+    cam->image_width = image_width;
+    cam->samples_per_pixel = samples_per_pixel;
+    cam->pixel_samples_scale = pixel_samples_scale;
+    cam->w = w;
+    cam->u = u;
+    cam->v = v;
+}
+
+static struct Camera camera_setup() {
+    Camera cam;
+    cam.look_at = point3_new(0, 0, -1);
+    cam.look_from = point3_new(0, 0, 0);
+    cam.up = vec3_new(0, 1, 0);
+    cam.vfov = 90.0;
+    camera_init(&cam);
     return cam;
 }
+
 
 Vec3 sample_square() {
     // Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square

@@ -64,9 +64,25 @@ int test_main(void **state) {
     /* Sending Rays Into the Scene */
     (void) state; /* unused */
 
-    Camera cam = camera_init();
+    Camera cam = camera_setup();
+    cam.look_from = point3_new(-2,2,1);
+    cam.look_at = point3_new(0,0,-1);
+    cam.up = vec3_new(0,-1,0); // WHY IS UP INVERTED???
+    cam.vfov = 20.0;
+    camera_init(&cam);
 
     // Create World
+
+    //// Two sphere scene
+    //// float R = cosf(degrees_to_radians(45.0));
+    //// Hittable_list world = hittable_list_new(2);
+    //// Material lambertian_red = material_lambertian(color_new(1,0,0));
+    //// Material lambertian_blue = material_lambertian(color_new(0,0,1));
+    //// hittable_list_add_sphere(&world, -R, 0, -1, R, &lambertian_red);
+    //// hittable_list_add_sphere(&world, R, 0, -1, R, &lambertian_blue);
+
+
+    //// Different material spheres
     Hittable_list world = hittable_list_new(5);
     Material lambertian_red = material_lambertian(color_new(0.7, 0.3, 0.3));
     Material lambertian_green = material_lambertian(color_new(0.3, 0.7, 0.3));
